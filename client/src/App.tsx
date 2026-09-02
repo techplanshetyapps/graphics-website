@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import EcosystemCanvas from "./components/EcosystemCanvas";
 import SceneOverlay from "./components/SceneOverlay";
 import SceneBackground from "./components/SceneBackground";
+import CustomCursor from "./components/CustomCursor";
 import { ecosystems } from "./data/ecosystems";
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
 
   return (
     <main style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}>
+      <CustomCursor ecosystem={ecosystem} />
       <SceneBackground ecosystem={ecosystem} />
       
       <EcosystemCanvas 

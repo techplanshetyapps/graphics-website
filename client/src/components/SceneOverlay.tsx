@@ -1,6 +1,8 @@
 // src/components/SceneOverlay.tsx
 import type { Ecosystem } from "../types";
 import { PercentProgressBar } from "react-loader-progressbar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowPointer } from "@fortawesome/free-solid-svg-icons";
 import "./SceneOverlay.css";
 
 export default function SceneOverlay({
@@ -49,6 +51,12 @@ export default function SceneOverlay({
           <button onClick={onPrev} aria-label="Previous ecosystem">
             ← Prev
           </button>
+
+        {/* FontAwesome Pointer Icon */}
+          <div className="cursor-indicator" style={{ display: "inline-flex", alignItems: "center" }}>
+            <FontAwesomeIcon icon={faArrowPointer} color="#00ffcc" size="sm" />
+          </div>
+
           <span className="counter">
             {index + 1} / {total}
           </span>
