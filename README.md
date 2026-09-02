@@ -25,14 +25,12 @@ ecosystems-node/
     └── vite.config.ts             # dev-time proxy to the backend
 ```
 
-## Run it
+## Installationn
 
 ### Prerequisites
 - **Node.js 18+** (`node -v` to check)
 
-### Development mode 
-
-Two terminals: frontend and backend run as separate processes with hot-reload.
+### Development mode
 
 **Terminal 1 — backend:**
 ```bash
@@ -63,8 +61,6 @@ Open **`http://localhost:5173`**. The frontend automatically proxies its
 `vite.config.ts`) — no config changes needed.
 
 ### Production mode 
-
-Build the frontend once, then run only the backend, which serves everything.
 
 ```bash
 # 1. Build the React app
@@ -102,7 +98,7 @@ curl -I http://localhost:4000/models/jungle-forest.glb  # HTTP 200
 | `npm install` fails | Confirm Node version is 18+; delete `node_modules` and `package-lock.json` in that folder and retry |
 | Port `4000` or `5173` already in use | Set `PORT=4001 npm start` for the server, or change `server.port` in `client/vite.config.ts` |
 
-## Verified working (real checks, not just written)
+## Verified working production
 
 - `server`: `node --check` on both server files passed; the real Express
   server was started and `curl`-tested:
@@ -169,8 +165,9 @@ fixed random seeds per scene, so output is reproducible run to run.
 
 ## 3D vs 2D scenes 
 
-6 "3D" scenes (Jungle Forest, Ocean Floor, Cloud Forest, Seagrass Meadow,
-Tropical Savanna, Desert Fauna) use volumetric geometry with free camera
-orbit (`enableRotate={true}`). 2 "2D" scenes (Epiphytic Canopy Ecosystem,
-Large Icebergs Drift) use flat, single-depth-plane geometry with rotation
+- "3D" scenes. For instance, Jungle Forest, Ocean Floor, Cloud Forest, Seagrass Meadow,
+Tropical Savanna, Desert Fauna, on volumetric geometry with free camera
+orbit (`enableRotate={true}`).
+- "2D" scenes. For instance, Epiphytic Canopy Ecosystem,
+Large Icebergs Drift, on use flat, single-depth-plane geometry with rotation
 disabled (`enableRotate={false}`) — a viewable card, not a walkable volume.
