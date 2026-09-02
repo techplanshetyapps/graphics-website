@@ -1,11 +1,3 @@
-// server/data/ecosystems.js
-//
-// Single source of truth for every scene, now served over HTTP instead of
-// bundled into the frontend. Descriptions are original paraphrased
-// summaries of well-known facts -- not text copied from Wikipedia or any
-// other source (copyright: verbatim reproduction isn't done here). Verify
-// independently before treating these as citable facts.
-
 const ecosystems = [
   {
     slug: "jungle-forest",
