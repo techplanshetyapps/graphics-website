@@ -1,9 +1,10 @@
 {
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/server/index.js" },
-    { "src": "/models/(.*)", "dest": "/server/index.js" },
-    { "src": "/assets/(.*)", "dest": "/client/dist/assets/$1" },
-    { "src": "/favicon.ico", "dest": "/client/dist/favicon.ico" },
-    { "src": "/(.*)", "dest": "/client/dist/index.html" }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/server/index.js" },
+    { "source": "/models/(.*)", "destination": "/server/index.js" },
+    { "source": "/assets/(.*)", "destination": "/client/dist/assets/$1" },
+    { "source": "/favicon.ico", "destination": "/client/dist/favicon.ico" },
+    { "source": "/(.*)", "destination": "/client/dist/index.html" }
   ]
 }
