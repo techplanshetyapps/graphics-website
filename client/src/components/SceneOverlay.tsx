@@ -1,4 +1,6 @@
+// src/components/SceneOverlay.tsx
 import type { Ecosystem } from "../types";
+import { PercentProgressBar } from "react-loader-progressbar";
 import "./SceneOverlay.css";
 
 export default function SceneOverlay({
@@ -7,12 +9,16 @@ export default function SceneOverlay({
   total,
   onPrev,
   onNext,
+  loadingProgress,
+  isLoading,
 }: {
   ecosystem: Ecosystem;
   index: number;
   total: number;
   onPrev: () => void;
   onNext: () => void;
+  loadingProgress: number;
+  isLoading: boolean;
 }) {
   return (
     <div className="overlay">
@@ -23,16 +29,34 @@ export default function SceneOverlay({
         <p className="fact">{ecosystem.fact}</p>
       </div>
 
-      <div className="overlay-bottom">
-        <button onClick={onPrev} aria-label="Previous ecosystem">
-          ← Prev
-        </button>
-        <span className="counter">
-          {index + 1} / {total}
-        </span>
-        <button onClick={onNext} aria-label="Next ecosystem">
-          Next →
-        </button>
+      <div 
+        className="overlay-bottom" 
+        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}
+      >
+        {/* Navigation Controls Row */}
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <button onClick={onPrev} aria-label="Previous ecosystem">
+            ← Prev
+          </button>
+          <span className="counter">
+            {index + 1} / {total}
+          </span>
+          <button onClick={onNext} aria-label="Next ecosystem">
+            Next →
+          </button>
+        </div>
+
+        {/* Contrast Progress Bar below the arrows */}
+        {isLoading && (
+          <div style={{ width: "180px" }}>
+            <PercentProgressBar
+              percent={Math.round(loadingProgress)}
+              color="#00ffcc"
+              textColor="#ffffff"
+              fontSize="10px"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
