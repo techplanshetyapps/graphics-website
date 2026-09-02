@@ -1,4 +1,6 @@
-const ecosystems = [
+import type { Ecosystem } from "../types";
+
+export const ecosystems = [
   {
     slug: "jungle-forest",
     title: "Jungle Forest",
@@ -88,5 +90,3 @@ const ecosystems = [
     cameraDistance: 6,
   },
 ];
-
-module.exports = { ecosystems };
