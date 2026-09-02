@@ -1,6 +1,7 @@
+// src/components/EcosystemCanvas.tsx
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, useGLTF, Html } from "@react-three/drei";
+import { OrbitControls, Environment, useGLTF, useProgress, Html } from "@react-three/drei";
 import type { Ecosystem } from "../types";
 
 function Model({ path }: { path: string }) {
@@ -18,19 +19,23 @@ function Loader() {
   );
 }
 
-/**
- * 3D vs 2D implementation difference (unchanged from the model-authoring
- * side -- see server-side generate_models.py):
- *
- * - "3d" scenes: free-orbiting camera (OrbitControls with rotation), a
- *   soft studio Environment for reflections. Treated as a walkable volume.
- * - "2d" scenes: camera locked front-on, rotation disabled
- *   (enableRotate={false}) -- only pan/zoom remain. The underlying models
- *   are also authored as flat, single-depth-plane geometry, so there's
- *   nothing to see from the side. Presented like an illustrated card.
- */
-export default function EcosystemCanvas({ ecosystem }: { ecosystem: Ecosystem }) {
+export default function EcosystemCanvas({ 
+  ecosystem, 
+  onProgress 
+}: { 
+  ecosystem: Ecosystem; 
+  onProgress?: (progress: number, active: boolean) => void;
+}) {
   const is3D = ecosystem.type === "3d";
+
+  // Tracks model loading progress via Drei
+  function LoaderWatcher() {
+    const { progress, active } = useProgress();
+    if (onProgress) {
+      onProgress(progress, active);
+    }
+    return null;
+  }
 
   return (
     <Canvas
@@ -42,6 +47,7 @@ export default function EcosystemCanvas({ ecosystem }: { ecosystem: Ecosystem })
       }}
       shadows
     >
+      <LoaderWatcher />
       <ambientLight intensity={0.6} />
       <directionalLight position={[5, 8, 5]} intensity={1.1} castShadow />
 
