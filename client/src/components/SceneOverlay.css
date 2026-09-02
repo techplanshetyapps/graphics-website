@@ -1,0 +1,80 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px;
+  pointer-events: none;
+}
+
+.overlay-top {
+  max-width: 520px;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(4px);
+}
+
+.overlay-top h1 {
+  font-size: 2.2rem;
+  margin: 0 0 12px 0;
+  font-weight: 800;
+}
+
+.description {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+  opacity: 0.95;
+}
+
+.fact {
+  font-size: 0.9rem;
+  font-style: italic;
+  border-left: 3px solid rgba(255, 255, 255, 0.6);
+  padding-left: 12px;
+  opacity: 0.9;
+}
+
+.overlay-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  pointer-events: auto;
+}
+
+.overlay-bottom button {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.15s ease;
+}
+
+.overlay-bottom button:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.counter {
+  color: white;
+  font-family: monospace;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
