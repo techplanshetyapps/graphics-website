@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import EcosystemCanvas from "./components/EcosystemCanvas";
 import SceneOverlay from "./components/SceneOverlay";
 import SceneBackground from "./components/SceneBackground";
@@ -10,14 +10,37 @@ export default function App() {
   const [index, setIndex] = useState(0);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [canvasImage, setCanvasImage] = useState<string | undefined>(undefined);
+  
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const goNext = useCallback(() => {
+    captureSnapshot();
     setIndex((i) => (i + 1) % ecosystems.length);
   }, []);
 
   const goPrev = useCallback(() => {
+    captureSnapshot();
     setIndex((i) => (i - 1 + ecosystems.length) % ecosystems.length);
   }, []);
+
+  const captureSnapshot = () => {
+    const canvas = document.querySelector("canvas");
+    if (canvas) {
+      try {
+        const dataUrl = canvas.toDataURL("image/png");
+        setCanvasImage(dataUrl);
+      } catch (e) {
+        console.warn("Canvas is tainted. Skipping image snapshot for PDF.", e);
+        setCanvasImage(undefined);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(captureSnapshot, 800);
+    return () => clearTimeout(timer);
+  }, [index]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -36,11 +59,13 @@ export default function App() {
       <SceneBackground ecosystem={ecosystem} />
       
       <EcosystemCanvas 
+        ref={canvasRef}
         key={ecosystem.slug} 
         ecosystem={ecosystem} 
         onProgress={(progress, active) => {
           setLoadingProgress(progress);
           setIsLoading(active);
+          if (!active) captureSnapshot();
         }}
       />
 
@@ -52,6 +77,7 @@ export default function App() {
         onNext={goNext}
         loadingProgress={loadingProgress}
         isLoading={isLoading}
+        canvasImage={canvasImage}
       />
     </main>
   );
