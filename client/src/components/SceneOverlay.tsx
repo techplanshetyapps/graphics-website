@@ -12,7 +12,7 @@ import {
   faTimes,
   faDownload 
 } from "@fortawesome/free-solid-svg-icons";
-import { pdf, PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import EcosystemPDF from "./EcosystemPDF";
 import "./SceneOverlay.css";
 
@@ -36,24 +36,6 @@ export default function SceneOverlay({
   canvasImage?: string;
 }) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const handleOpenPreview = async () => {
-    setIsGenerating(true);
-    try {
-      const blob = await pdf(
-        <EcosystemPDF ecosystem={ecosystem} imageSnapshot={canvasImage} />
-      ).toBlob();
-      const url = URL.createObjectURL(blob);
-      setPdfUrl(url);
-      setIsPreviewOpen(true);
-    } catch (error) {
-      console.error("Error generating PDF preview:", error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
 
   return (
     <div className="overlay">
@@ -66,8 +48,7 @@ export default function SceneOverlay({
 
           {/* Export PDF Button */}
           <button
-            onClick={handleOpenPreview}
-            disabled={isGenerating}
+            onClick={() => setIsPreviewOpen(true)}
             style={{
               backgroundColor: "#21262d",
               color: "#00ffcc",
@@ -78,12 +59,11 @@ export default function SceneOverlay({
               display: "flex",
               alignItems: "center",
               gap: "6px",
-              cursor: "pointer",
-              opacity: isGenerating ? 0.7 : 1
+              cursor: "pointer"
             }}
           >
             <FontAwesomeIcon icon={faFilePdf} />
-            {isGenerating ? "Generating..." : "Export PDF"}
+            Export PDF
           </button>
         </div>
 
@@ -171,7 +151,7 @@ export default function SceneOverlay({
             </button>
           </div>
 
-          {/* Stable iframe PDF Viewer using Blob URL */}
+          {/* Live PDF Viewer */}
           <div style={{
             width: "100%",
             maxWidth: "800px",
@@ -179,22 +159,11 @@ export default function SceneOverlay({
             borderRadius: "8px",
             overflow: "hidden",
             border: "1px solid #30363d",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
-            backgroundColor: "#0d1117"
+            boxShadow: "0 8px 24px rgba(0,0,0,0.5)"
           }}>
-            {pdfUrl ? (
-              <iframe 
-                src={pdfUrl} 
-                width="100%" 
-                height="100%" 
-                style={{ border: "none" }} 
-                title="PDF Preview" 
-              />
-            ) : (
-              <div style={{ color: "#ffffff", textAlign: "center", padding: "40px" }}>
-                Loading Preview...
-              </div>
-            )}
+            <PDFViewer width="100%" height="100%" style={{ border: "none" }}>
+              <EcosystemPDF ecosystem={ecosystem} imageSnapshot={canvasImage} />
+            </PDFViewer>
           </div>
 
           {/* Modal Footer Controls */}
