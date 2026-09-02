@@ -33,6 +33,17 @@ export default function SceneOverlay({
         className="overlay-bottom" 
         style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}
       >
+      {/* Contrast Progress Bar */}
+        {isLoading && (
+          <div style={{ width: "160px" }}>
+            <PercentProgressBar
+              percent={Math.round(loadingProgress)}
+              color="#00ffcc"
+              textColor="#ffffff"
+              fontSize="11px"
+            />
+          </div>
+        )}
         {/* Navigation Controls Row */}
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <button onClick={onPrev} aria-label="Previous ecosystem">
@@ -46,17 +57,6 @@ export default function SceneOverlay({
           </button>
         </div>
 
-        {/* Contrast Progress Bar below the arrows */}
-        {isLoading && (
-          <div style={{ width: "180px" }}>
-            <PercentProgressBar
-              percent={Math.round(loadingProgress)}
-              color="#00ffcc"
-              textColor="#ffffff"
-              fontSize="10px"
-            />
-          </div>
-        )}
       </div>
     </div>
   );
