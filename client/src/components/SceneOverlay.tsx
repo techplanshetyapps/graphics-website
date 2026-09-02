@@ -1,8 +1,19 @@
 // src/components/SceneOverlay.tsx
+import { useState } from "react";
 import type { Ecosystem } from "../types";
 import { PercentProgressBar } from "react-loader-progressbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowPointer } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faChevronLeft, 
+  faChevronRight, 
+  faArrowPointer, 
+  faLeaf,
+  faFilePdf,
+  faTimes,
+  faDownload 
+} from "@fortawesome/free-solid-svg-icons";
+import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
+import EcosystemPDF from "./EcosystemPDF";
 import "./SceneOverlay.css";
 
 export default function SceneOverlay({
@@ -13,6 +24,7 @@ export default function SceneOverlay({
   onNext,
   loadingProgress,
   isLoading,
+  canvasImage,
 }: {
   ecosystem: Ecosystem;
   index: number;
@@ -21,11 +33,40 @@ export default function SceneOverlay({
   onNext: () => void;
   loadingProgress: number;
   isLoading: boolean;
+  canvasImage?: string;
 }) {
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
   return (
     <div className="overlay">
       <div className="overlay-top">
-        <span className="badge">{ecosystem.type === "3d" ? "3D scene" : "2D scene"}</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span className="badge">
+            <FontAwesomeIcon icon={faLeaf} style={{ marginRight: "6px" }} />
+            {ecosystem.type === "3d" ? "3D scene" : "2D scene"}
+          </span>
+
+          {/* Export PDF Button */}
+          <button
+            onClick={() => setIsPreviewOpen(true)}
+            style={{
+              backgroundColor: "#21262d",
+              color: "#00ffcc",
+              padding: "6px 12px",
+              borderRadius: "6px",
+              fontSize: "12px",
+              border: "1px solid #30363d",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              cursor: "pointer"
+            }}
+          >
+            <FontAwesomeIcon icon={faFilePdf} />
+            Export PDF
+          </button>
+        </div>
+
         <h1>{ecosystem.title}</h1>
         <p className="description">{ecosystem.description}</p>
         <p className="fact">{ecosystem.fact}</p>
@@ -35,7 +76,7 @@ export default function SceneOverlay({
         className="overlay-bottom" 
         style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}
       >
-      {/* Contrast Progress Bar */}
+        {/* Contrast Progress Bar */}
         {isLoading && (
           <div style={{ width: "160px" }}>
             <PercentProgressBar
@@ -46,13 +87,14 @@ export default function SceneOverlay({
             />
           </div>
         )}
+
         {/* Navigation Controls Row */}
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <button onClick={onPrev} aria-label="Previous ecosystem">
-            ← Prev
+            <FontAwesomeIcon icon={faChevronLeft} /> Prev
           </button>
 
-        {/* FontAwesome Pointer Icon */}
+          {/* FontAwesome Pointer Icon */}
           <div className="cursor-indicator" style={{ display: "inline-flex", alignItems: "center" }}>
             <FontAwesomeIcon icon={faArrowPointer} color="#00ffcc" size="sm" />
           </div>
@@ -60,12 +102,122 @@ export default function SceneOverlay({
           <span className="counter">
             {index + 1} / {total}
           </span>
+
           <button onClick={onNext} aria-label="Next ecosystem">
-            Next →
+            Next <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>
-
       </div>
+
+      {/* FULL-SCREEN PDF PREVIEW MODAL */}
+      {isPreviewOpen && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          backgroundColor: "rgba(13, 17, 23, 0.9)",
+          backdropFilter: "blur(5px)",
+          zIndex: 9999,
+          display: "flex",
+          flexDirection: "column",
+          padding: "20px",
+          alignItems: "center",
+          justifyContent: "center"
+        }}>
+          {/* Modal Header */}
+          <div style={{
+            width: "100%",
+            maxWidth: "800px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "12px",
+            color: "#ffffff"
+          }}>
+            <h3 style={{ margin: 0, fontSize: "16px", color: "#58a6ff" }}>
+              Report Preview: {ecosystem.title}
+            </h3>
+            <button
+              onClick={() => setIsPreviewOpen(false)}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#8b949e",
+                fontSize: "18px",
+                cursor: "pointer"
+              }}
+              aria-label="Close preview"
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </div>
+
+          {/* Live PDF Viewer */}
+          <div style={{
+            width: "100%",
+            maxWidth: "800px",
+            height: "70vh",
+            borderRadius: "8px",
+            overflow: "hidden",
+            border: "1px solid #30363d",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.5)"
+          }}>
+            <PDFViewer width="100%" height="100%" style={{ border: "none" }}>
+              <EcosystemPDF ecosystem={ecosystem} imageSnapshot={canvasImage} />
+            </PDFViewer>
+          </div>
+
+          {/* Modal Footer Controls */}
+          <div style={{
+            width: "100%",
+            maxWidth: "800px",
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "12px",
+            marginTop: "16px"
+          }}>
+            <button
+              onClick={() => setIsPreviewOpen(false)}
+              style={{
+                backgroundColor: "#21262d",
+                color: "#c9d1d9",
+                border: "1px solid #30363d",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "13px"
+              }}
+            >
+              Close
+            </button>
+
+            {/* Save / Download Button */}
+            <PDFDownloadLink
+              document={<EcosystemPDF ecosystem={ecosystem} imageSnapshot={canvasImage} />}
+              fileName={`${ecosystem.slug}-report.pdf`}
+              style={{
+                textDecoration: "none",
+                backgroundColor: "#238636",
+                color: "#ffffff",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                fontSize: "13px",
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                cursor: "pointer"
+              }}
+            >
+              {({ loading }) => (
+                <>
+                  <FontAwesomeIcon icon={faDownload} />
+                  {loading ? "Preparing File..." : "Save PDF to Device"}
+                </>
+              )}
+            </PDFDownloadLink>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
