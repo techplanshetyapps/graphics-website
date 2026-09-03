@@ -1,5 +1,5 @@
 // src/components/SceneOverlay.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Ecosystem } from "../types";
 import { PercentProgressBar } from "react-loader-progressbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,11 +10,33 @@ import {
   faLeaf,
   faFilePdf,
   faTimes,
-  faDownload 
+  faDownload,
+  faCloudSun,
+  faTemperatureHigh,
+  faTint,
+  faBinoculars
 } from "@fortawesome/free-solid-svg-icons";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import EcosystemPDF from "./EcosystemPDF";
 import "./SceneOverlay.css";
+
+interface LiveData {
+  weather?: {
+    temperature_2m: number;
+    relative_humidity_2m: number;
+    weather_code: number;
+  };
+  solar?: {
+    results?: {
+      sunrise: string;
+      sunset: string;
+    };
+  };
+  biodiversity?: Array<{
+    scientificName?: string;
+    vernacularName?: string;
+  }>;
+}
 
 export default function SceneOverlay({
   ecosystem,
@@ -36,6 +58,42 @@ export default function SceneOverlay({
   canvasImage?: string;
 }) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [liveData, setLiveData] = useState<LiveData | null>(null);
+  const [isFetchingLive, setIsFetchingLive] = useState(false);
+
+  // Fetch live environmental data whenever the ecosystem changes
+  useEffect(() => {
+    let isMounted = true;
+    async function loadLiveData() {
+      setIsFetchingLive(true);
+      try {
+        const response = await fetch(`/api/ecosystems/${ecosystem.slug}/live-data`);
+        if (response.ok) {
+          const data = await response.json();
+          if (isMounted) setLiveData(data);
+        }
+      } catch (err) {
+        console.warn("Failed to fetch live API data:", err);
+      } finally {
+        if (isMounted) setIsFetchingLive(false);
+      }
+    }
+
+    loadLiveData();
+    return () => {
+      isMounted = false;
+    };
+  }, [ecosystem.slug]);
+
+  // Format sunrise/sunset times cleanly if available
+  const formatTime = (isoString?: string) => {
+    if (!isoString) return "";
+    try {
+      return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return "";
+    }
+  };
 
   return (
     <div className="overlay">
@@ -70,6 +128,56 @@ export default function SceneOverlay({
         <h1>{ecosystem.title}</h1>
         <p className="description">{ecosystem.description}</p>
         <p className="fact">{ecosystem.fact}</p>
+
+        {/* Live Weather & Environmental Metrics Widget */}
+        <div style={{
+          marginTop: "14px",
+          padding: "10px 14px",
+          backgroundColor: "rgba(0, 0, 0, 0.4)",
+          border: "1px solid rgba(255, 255, 255, 0.15)",
+          borderRadius: "8px",
+          backdropFilter: "blur(6px)",
+          fontSize: "12px",
+          color: "#c9d1d9",
+          display: "flex",
+          flexDirection: "column",
+          gap: "6px"
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "4px" }}>
+            <span style={{ fontWeight: "bold", color: "#00ffcc", display: "flex", alignItems: "center", gap: "6px" }}>
+              <FontAwesomeIcon icon={faCloudSun} /> Real-Time Biome Metrics
+            </span>
+            {isFetchingLive && <span style={{ fontSize: "10px", opacity: 0.7 }}>Syncing APIs...</span>}
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "14px" }}>
+            {liveData?.weather && (
+              <>
+                <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <FontAwesomeIcon icon={faTemperatureHigh} color="#ffa657" /> 
+                  Temp: {liveData.weather.temperature_2m}°C
+                </span>
+                <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <FontAwesomeIcon icon={faTint} color="#58a6ff" /> 
+                  Humidity: {liveData.weather.relative_humidity_2m}%
+                </span>
+              </>
+            )}
+
+            {liveData?.solar?.results && (
+              <span>
+                🌅 Sunrise: {formatTime(liveData.solar.results.sunrise)} | Sunset: {formatTime(liveData.solar.results.sunset)}
+              </span>
+            )}
+          </div>
+
+          {liveData?.biodiversity && liveData.biodiversity.length > 0 && (
+            <div style={{ fontSize: "11px", opacity: 0.9, display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+              <FontAwesomeIcon icon={faBinoculars} color="#7ee787" />
+              <span>Sample Wildlife (GBIF): {liveData.biodiversity.map(b => b.vernacularName || b.scientificName).filter(Boolean).slice(0, 2).join(", ")}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div 

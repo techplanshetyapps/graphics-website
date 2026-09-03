@@ -171,3 +171,20 @@ orbit (`enableRotate={true}`).
 - "2D" scenes. For instance, Epiphytic Canopy Ecosystem,
 Large Icebergs Drift, on use flat, single-depth-plane geometry with rotation
 disabled (`enableRotate={false}`) — a viewable card, not a walkable volume.
+
+## API Endpoints & Real-Time Data Implementation
+
+The backend is powered by a Node.js and Express server (`server/index.js`) that exposes REST API endpoints to serve static ecosystem configurations as well as real-time, location-aware environmental metrics.
+
+### 1. Core Ecosystem Endpoints
+* **`GET /api/ecosystems`**  
+  * **What it does:** Responds with a JSON array containing the full ordered list of all available biomes and their metadata.
+* **`GET /api/ecosystems/:slug`**  
+  * **What it does:** Searches the local data store for a specific ecosystem scene using its unique slug (e.g., `/api/ecosystems/jungle-forest`) and returns it as JSON, or a `404` error if not found.
+
+### 2. Live Environmental & Biodiversity Implementation
+* **`GET /api/ecosystems/:slug/live-data`**  
+  * **What it does:** Aggregates real-time data concurrently from three external, open-access scientific APIs using the latitude and longitude mapped to each ecosystem:
+    1. **Open-Meteo API:** Fetches current live temperature ($\text{temperature\_2m}$) and relative humidity ($\text{relative\_humidity\_2m}$).
+    2. **Sunrise-Sunset API (v2):** Computes precise daily sunrise and sunset timestamps for the biome's geographic coordinates.
+    3. **GBIF (Global Biodiversity Information Facility) API:** Queries geo-referenced species occurrence records to provide live sample wildlife data for the specific region.

@@ -1,10 +1,13 @@
+// src/data/ecosystems.ts (or server/data/ecosystems.js)
 import type { Ecosystem } from "../types";
 
-export const ecosystems = [
+export const ecosystems: Ecosystem[] = [
   {
     slug: "jungle-forest",
     title: "Jungle Forest",
     type: "3d",
+    lat: -3.4653,
+    lng: -62.2159, // Amazon Rainforest, South America
     modelPath: "/models/jungle-forest.glb",
     description:
       "Tropical rainforests form dense, multi-layered canopies that host an extraordinary concentration of plant and animal species, often described as the most biodiverse terrestrial ecosystems on Earth.",
@@ -16,6 +19,8 @@ export const ecosystems = [
     slug: "ocean-floor",
     title: "Ocean Floor",
     type: "3d",
+    lat: -18.2871,
+    lng: 147.6992, // Great Barrier Reef, Coral Sea
     modelPath: "/models/ocean-floor.glb",
     description:
       "The seabed spans sunlit shallows to the pitch-black abyssal plain, supporting communities ranging from coral reefs to chemosynthetic life clustered around hydrothermal vents.",
@@ -27,6 +32,8 @@ export const ecosystems = [
     slug: "cloud-forest",
     title: "Cloud Forest",
     type: "3d",
+    lat: 10.3083,
+    lng: -84.8144, // Monteverde Cloud Forest, Costa Rica
     modelPath: "/models/cloud-forest.glb",
     description:
       "High-elevation tropical forests sit within near-constant low-level cloud cover, creating cool, moisture-saturated conditions where mosses, ferns, and orchids thrive on nearly every surface.",
@@ -38,6 +45,8 @@ export const ecosystems = [
     slug: "seagrass-meadow",
     title: "Seagrass Meadow",
     type: "3d",
+    lat: -25.4428,
+    lng: 113.5585, // Shark Bay, Western Australia
     modelPath: "/models/seagrass-meadow.glb",
     description:
       "Seagrasses are the only flowering plants that live fully submerged in seawater, forming dense underwater meadows that stabilize sediment and serve as nurseries for countless marine species.",
@@ -49,6 +58,8 @@ export const ecosystems = [
     slug: "tropical-savanna",
     title: "Tropical Savanna",
     type: "3d",
+    lat: -2.3333,
+    lng: 34.8333, // Serengeti National Park, Tanzania
     modelPath: "/models/tropical-savanna.glb",
     description:
       "Savannas are grassland ecosystems scattered with drought-resistant trees, shaped by a strong wet-and-dry seasonal cycle and regular fire, and home to some of the largest land-migrating herds on Earth.",
@@ -60,6 +71,8 @@ export const ecosystems = [
     slug: "desert-fauna",
     title: "Desert Fauna",
     type: "3d",
+    lat: 25.0000,
+    lng: 15.0000, // Sahara Desert Region
     modelPath: "/models/desert-fauna.glb",
     description:
       "Desert-adapted animals survive extreme temperature swings and scarce water through specialized behaviors and physiology, from nocturnal activity to highly efficient kidneys that minimize water loss.",
@@ -71,6 +84,8 @@ export const ecosystems = [
     slug: "epiphytic-canopy",
     title: "Epiphytic Canopy Ecosystem",
     type: "2d",
+    lat: -16.1700,
+    lng: 145.4180, // Daintree Rainforest, Australia
     modelPath: "/models/epiphytic-canopy.glb",
     description:
       "Epiphytes are plants that grow harmlessly on the surface of other plants, especially tree trunks and branches, gathering moisture and nutrients from the air and rain rather than from soil.",
@@ -82,6 +97,8 @@ export const ecosystems = [
     slug: "icebergs-drift",
     title: "Large Icebergs Drift",
     type: "2d",
+    lat: -75.0000,
+    lng: -40.0000, // Weddell Sea / Antarctica Shelf
     modelPath: "/models/icebergs-drift.glb",
     description:
       "Icebergs calve from glaciers and ice shelves and drift on ocean currents for years, with roughly seven-eighths of their mass hidden beneath the waterline.",
